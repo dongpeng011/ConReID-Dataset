@@ -75,7 +75,7 @@ Our ISGA-ViT framework achieves state-of-the-art (SOTA) performance on multiple 
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/YourUsername/ISGA-ViT.git
+git clone https://github.com/dongpeng011/ISGA-ViT.git
 cd ISGA-ViT
 
 # Install dependencies
