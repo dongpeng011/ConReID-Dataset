@@ -5,7 +5,22 @@
 
 This is the official repository for the paper: **"Robust Person Re-identification in Complex Construction Environments via Implicit Scene-Adaptive Prompting and Geometric Manifold Alignment"**. 
 
-This repository also hosts the newly constructed **Con-ReID dataset**, which is specifically designed for person Re-identification (ReID) in complex industrial and construction environments.
+This repository hosts both the source code for our **ISGA-ViT framework** and the newly constructed **Con-ReID dataset**, providing a comprehensive solution for person Re-identification (ReID) in complex industrial and construction environments.
+
+---
+
+## 📖 Table of Contents
+- [1. Introduction](#1-introduction)
+- [2. The Con-ReID Dataset](#2-the-con-reid-dataset)
+- [3. Main Results](#3-main-results)
+- [4. Getting Started](#4-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Data Preparation](#data-preparation)
+  - [Training & Evaluation](#training--evaluation)
+- [5. Acknowledgement](#5-acknowledgement)
+- [6. Citation](#6-citation)
+- [7. Contact](#7-contact)
 
 ---
 
@@ -30,7 +45,7 @@ Existing datasets mostly focus on city streets or campuses. To bridge the gap fo
 * **Total Images:** 13,130
 * **Total Identities:** 154
 * **Cameras:** 6 (covering front, back, side, and top-down views)
-* **Image Size:** Standardized to 64 × 128 pixels (with Zero-Padding to preserve aspect ratio).
+* **Image Size:** Standardized to `64 × 128` pixels (with Zero-Padding to preserve aspect ratio).
 * **Challenges Included:** Heavy occlusion, low-resolution (distant targets), and cross-modality (pseudo-infrared) images.
 
 ### Data Splitting:
@@ -40,12 +55,7 @@ Existing datasets mostly focus on city streets or campuses. To bridge the gap fo
 | **Query Set** | 30 | 102 | Targets to be re-identified. |
 | **Gallery Set** | 33 | 4,184 | Reference database. |
 
-### Naming Convention:
-To ensure compatibility with existing evaluation codes, we strictly follow the Market-1501 naming format:
-`ID_cXsY_ZZZZZZ.jpg`
-*(e.g., `0002_c5s1_000001.jpg` means Identity 0002, Camera 5, Sequence 1, Frame 000001).*
-
-**[🔗 Click here to download the Con-ReID dataset ((https://github.com/dongpeng011/ConReID-Dataset))]**
+> **[🔗 Click here to access the Con-ReID dataset](https://github.com/dongpeng011/ConReID-Dataset)**
 
 ---
 
@@ -55,13 +65,13 @@ Our ISGA-ViT framework achieves state-of-the-art (SOTA) performance on multiple 
 
 | Dataset | mAP (%) | Rank-1 (%) |
 | :--- | :--- | :--- |
-| **Con-ReID** | **89.6** | **97.3** |
+| **Con-ReID (Ours)** | **89.6** | **97.3** |
 | Market1501 | 80.6 | 92.3 |
 | Msmt17 | 42.1 | 66.2 |
 | MLR-CUHK03 | 87.2 | 91.9 |
 | Occ-Duke | 59.7 | 72.9 |
 
-> *For more detailed results, including ablation studies and single-scene performance, please refer to our paper.*
+*(For more detailed results, including ablation studies and single-scene performance, please refer to our paper.)*
 
 ---
 
@@ -73,17 +83,50 @@ Our ISGA-ViT framework achieves state-of-the-art (SOTA) performance on multiple 
 * PyTorch >= 2.0 (CUDA 12.1 recommended)
 
 ### Installation
+Clone the repository and install the required dependencies:
 ```bash
-# Clone the repository
 git clone https://github.com/dongpeng011/ISGA-ViT.git
 cd ISGA-ViT
-
-# Install dependencies
 pip install -r requirements.txt
+
+
+
+### Data Preparation
+Download the Con-ReID dataset (and other public datasets if needed) and organize them in the ./data/ directory as follows:
 ISGA-ViT/
 ├── data/
-│   └── Con-ReID/
-│       ├── bounding_box_train/
-│       ├── bounding_box_test/
-│       └── query/
+│   ├── Con-ReID/
+│   │   ├── bounding_box_train/
+│   │   ├── bounding_box_test/
+│   │   └── query/
+│   ├── market1501/
+│   └── msmt17/
+├── models/
+├── configs/
+└── train.py
+(Note: Please ensure you modify the dataset root paths in your configuration files accordingly.)
+
+### Training & Evaluation
+To train the ISGA-ViT model:
+# Example training command for Con-ReID
+python train.py --config_file configs/con_reid.yml MODEL.DEVICE_ID "('0')"
+
+To evaluate a pre-trained model:
+# Example testing command
+python test.py --config_file configs/con_reid.yml MODEL.DEVICE_ID "('0')" \
+  TEST.WEIGHT /path/to/your/best_model.pth
+
+## 5. Acknowledgement
+This repository is built upon the excellent open-source work of TransReID and VersReID. We sincerely thank the original authors for their outstanding contributions to the ReID community.
+
+## 6. Citation
+If you find our paper, code, or the Con-ReID dataset helpful in your research, please consider citing our work:
+@article{liu2026robust,
+  title={Robust Person Re-identification in Complex Construction Environments via Implicit Scene-Adaptive Prompting and Geometric Manifold Alignment},
+  author={Liu, Hongbin and Dong, Peng and Guo, Xiuyi and Zhao, Yongze and Li, Chengdong and Wang, Yilin},
+  journal={Preprint submitted to Elsevier},
+  year={2026}
+}
+
+## 7. Contact
 If you have any questions, please feel free to open an issue or contact liuhongbin19@sdjzu.edu.cn.
