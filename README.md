@@ -92,6 +92,7 @@ pip install -r requirements.txt
 
 ### Data Preparation
 Download the Con-ReID dataset (and other public datasets if needed) and organize them in the ./data/ directory as follows:
+```
 ISGA-ViT/
 ├── data/
 │   ├── Con-ReID/
@@ -104,28 +105,34 @@ ISGA-ViT/
 ├── configs/
 └── train.py
 (Note: Please ensure you modify the dataset root paths in your configuration files accordingly.)
+```
 
 ### Training & Evaluation
 To train the ISGA-ViT model:
-# Example training command for Con-ReID
+Example training command for Con-ReID
+```
 python train.py --config_file configs/con_reid.yml MODEL.DEVICE_ID "('0')"
+```
 
 To evaluate a pre-trained model:
-# Example testing command
-python test.py --config_file configs/con_reid.yml MODEL.DEVICE_ID "('0')" \
-  TEST.WEIGHT /path/to/your/best_model.pth
+Example testing command
+```
+python test.py --config_file configs/con_reid.yml MODEL.DEVICE_ID "('0')" \TEST.WEIGHT /path/to/your/best_model.pth
+```
 
 ## 5. Acknowledgement
 This repository is built upon the excellent open-source work of TransReID and VersReID. We sincerely thank the original authors for their outstanding contributions to the ReID community.
 
 ## 6. Citation
 If you find our paper, code, or the Con-ReID dataset helpful in your research, please consider citing our work:
+```
 @article{liu2026robust,
   title={Robust Person Re-identification in Complex Construction Environments via Implicit Scene-Adaptive Prompting and Geometric Manifold Alignment},
   author={Liu, Hongbin and Dong, Peng and Guo, Xiuyi and Zhao, Yongze and Li, Chengdong and Wang, Yilin},
   journal={Preprint submitted to Elsevier},
   year={2026}
 }
+```
 
 ## 7. Contact
 If you have any questions, please feel free to open an issue or contact liuhongbin19@sdjzu.edu.cn.
