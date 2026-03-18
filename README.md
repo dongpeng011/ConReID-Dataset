@@ -88,8 +88,7 @@ Clone the repository and install the required dependencies:
 git clone https://github.com/dongpeng011/ISGA-ViT.git
 cd ISGA-ViT
 pip install -r requirements.txt
-
-
+```
 
 ### Data Preparation
 Download the Con-ReID dataset (and other public datasets if needed) and organize them in the ./data/ directory as follows:
