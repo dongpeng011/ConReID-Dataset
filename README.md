@@ -1,138 +1,192 @@
-# Robust Person Re-identification in Complex Construction Environments
+<div align="center">
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=flat&logo=PyTorch&logoColor=white)](https://pytorch.org/)
+# 🏗️ Con-ReID
 
-This is the official repository for the paper: **"Robust Person Re-identification in Complex Construction Environments via Implicit Scene-Adaptive Prompting and Geometric Manifold Alignment"**. 
+**Unified framework for robust Person Re-Identification in complex construction environments**
 
-This repository hosts both the source code for our **ISGA-ViT framework** and the newly constructed **Con-ReID dataset**, providing a comprehensive solution for person Re-identification (ReID) in complex industrial and construction environments.
+Hongbin Liu · Peng Dong · Xiuyi Guo · Jilong Li · Yitong Zhou · Baoxu Wang
 
----
+[![Paper](https://img.shields.io/badge/Paper-Automation%20in%20Construction-1F6FEB?logo=elsevier&logoColor=white)](https://doi.org/10.1016/j.autcon.2026.107253)
+[![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.autcon.2026.107253-3DA639)](https://doi.org/10.1016/j.autcon.2026.107253)
+[![Dataset](https://img.shields.io/badge/Dataset-Con--ReID-8A2BE2?logo=databricks&logoColor=white)](#-the-con-reid-dataset)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![License](https://img.shields.io/badge/License-MIT-3DA639)](./ISGAViT-main/ISGAViT-main/LICENSE)
 
-## 📖 Table of Contents
-- [1. Introduction](#1-introduction)
-- [2. The Con-ReID Dataset](#2-the-con-reid-dataset)
-- [3. Main Results](#3-main-results)
-- [4. Getting Started](#4-getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Data Preparation](#data-preparation)
-  - [Training & Evaluation](#training--evaluation)
-- [5. Acknowledgement](#5-acknowledgement)
-- [6. Citation](#6-citation)
-- [7. Contact](#7-contact)
+[Overview](#-overview) · [Dataset](#-the-con-reid-dataset) · [Results](#-main-results) · [Quick start](#-getting-started) · [Citation](#-citation)
 
----
+</div>
 
-## 1. Introduction
+<p align="center">
+  <img src="ISGAViT-main/ISGAViT-main/assets/main_figure.jpg" alt="ISGA-ViT framework" width="92%"/>
+</p>
+<p align="center"><sub><b>ISGA-ViT</b> — Semantic Feature Calibration (SFC), Latent Context Prompting (LCP) and Geometric Manifold Alignment (GMA) for person ReID on construction sites.</sub></p>
 
-Conventional ReID models encounter significant limitations in construction sites. These environments feature severe visual similarity (identical safety uniforms), low-resolution targets, massive visual blind spots, and extreme environmental dynamics. 
+<div align="center">
 
-To overcome these challenges without relying on manual scene labels, we propose a unified framework named **ISGA-ViT**. It employs a cohesive, multi-layer strategy to extract reliable identity features in dynamic construction environments.
+| 🖼️ Images | 🧍 Identities | 📷 Cameras | 📐 Crop size | 🏷️ Scenes |
+|:---:|:---:|:---:|:---:|:---:|
+| 13,130 | 154 | 6 | 64 × 128 | construction sites |
 
-### Key Components of ISGA-ViT:
-* **SFC (Semantic Feature Calibration):** Acts as a feature denoiser. It filters out the visual similarity trap caused by identical safety vests and forces the model to focus on unique identity details.
-* **LCP (Latent Context Prompting):** Operates entirely without manual labels. It implicitly infers specific scene contexts (e.g., occlusion, infrared) and generates adaptive prompts to adjust the Transformer's attention in real-time.
-* **GMA (Geometric Manifold Alignment):** Integrates learnable camera and viewpoint embeddings to explicitly correct extreme geometric distortions found in irregular camera networks.
+</div>
 
 ---
 
-## 2. The Con-ReID Dataset
+## 📰 News
 
-Existing datasets mostly focus on city streets or campuses. To bridge the gap for industrial scenarios, we constructed **Con-ReID**. It is collected directly from real-world operating construction sites.
+- **2026** — The paper is published in *Automation in Construction* (Vol. 192, 107253).
+  DOI: [10.1016/j.autcon.2026.107253](https://doi.org/10.1016/j.autcon.2026.107253)
+- **2026** — Code of **ISGA-ViT** and the **Con-ReID** dataset are released in this repository.
 
-### Dataset Statistics:
-* **Total Images:** 13,130
-* **Total Identities:** 154
-* **Cameras:** 6 (covering front, back, side, and top-down views)
-* **Image Size:** Standardized to `64 × 128` pixels (with Zero-Padding to preserve aspect ratio).
-* **Challenges Included:** Heavy occlusion, low-resolution (distant targets), and cross-modality (pseudo-infrared) images.
+## 🔍 Overview
 
-### Data Splitting:
-| Subset | Identities | Images | Description |
-| :--- | :--- | :--- | :--- |
-| **Train Set** | 91 | 8,844 | Used to optimize model parameters. |
-| **Query Set** | 30 | 102 | Targets to be re-identified. |
-| **Gallery Set** | 33 | 4,184 | Reference database. |
+Person ReID on construction sites is hard for reasons that have little to do with
+the benchmarks the field usually uses: almost everyone wears the same safety
+uniform, targets are far away and low-resolution, cameras are mounted at
+irregular angles with large blind spots, and illumination changes abruptly. The
+paper proposes **ISGA-ViT**, a framework that addresses the three difficulties
+separately and without manual scene labels.
 
-> **[🔗 Click here to access the Con-ReID dataset](https://github.com/dongpeng011/ConReID-Dataset)**
+| Module | Role | What it does |
+|---|---|---|
+| 🧹 **SFC** — Semantic Feature Calibration | feature denoising | Suppresses the "identical safety vest" shortcut and forces the model to keep identity-specific evidence. |
+| 💡 **LCP** — Latent Context Prompting | label-free scene adaptation | Infers the scene context (occlusion, pseudo-infrared, distance) and generates prompts that modulate the transformer attention. |
+| 📐 **GMA** — Geometric Manifold Alignment | geometry correction | Learnable camera and viewpoint embeddings compensate the strong perspective distortions of irregular camera networks. |
 
----
+## 🏙️ The Con-ReID Dataset
 
-## 3. Main Results
+Existing ReID datasets are collected on campuses or city streets. **Con-ReID**
+was recorded on operating construction sites, so it contains the nuisances that
+matter in that setting: identical uniforms, heavy occlusion, distant
+low-resolution targets and pseudo-infrared frames.
 
-Our ISGA-ViT framework achieves state-of-the-art (SOTA) performance on multiple public benchmarks and the Con-ReID dataset under the Multi-Scene Joint Training setting.
+### Statistics as reported in the paper
+
+| Subset | Identities | Images | Purpose |
+|---|:---:|:---:|---|
+| **Train** | 91 | 8,844 | optimisation |
+| **Query** | 30 | 102 | probes to be re-identified |
+| **Gallery** | 33 | 4,184 | reference database |
+| **Total** | **154** | **13,130** | 6 cameras |
+
+- **Cameras**: 6, covering front, back, side and top-down views.
+- **Image size**: standardised to `64 × 128`, zero-padded to preserve the aspect ratio.
+- **Challenges**: heavy occlusion, low resolution, pseudo-infrared (cross-modality) frames.
+
+### Repository layout
+
+```
+ConReID-Dataset/
+├── con-reid/
+│   ├── bounding_box_train/     training crops
+│   ├── bounding_box_test/      test crops
+│   ├── query/                  query crops
+│   └── gallery/                gallery crops
+└── ISGAViT-main/               ISGA-ViT source code
+```
+
+File names follow the Market-1501 convention,
+`{pid:04d}_c{cam}s1_{frame:06d}.jpg`, so the standard ReID data loaders work
+without modification. The `_1` suffix denotes the horizontally flipped copy of a
+crop. Please use the split defined in the paper when reporting numbers.
+
+## 🏆 Main results
+
+Multi-scene joint training, as reported in the paper:
 
 | Dataset | mAP (%) | Rank-1 (%) |
-| :--- | :--- | :--- |
-| **Con-ReID (Ours)** | **89.6** | **97.3** |
-| Market1501 | 80.6 | 92.3 |
-| Msmt17 | 42.1 | 66.2 |
+|---|:---:|:---:|
+| **Con-ReID (ours)** | **89.6** | **97.3** |
+| Market-1501 | 80.6 | 92.3 |
+| MSMT17 | 42.1 | 66.2 |
 | MLR-CUHK03 | 87.2 | 91.9 |
 | Occ-Duke | 59.7 | 72.9 |
 
-*(For more detailed results, including ablation studies and single-scene performance, please refer to our paper.)*
+Ablations, single-scene results and the per-module analysis are in the paper.
 
----
+## 🚀 Getting started
 
-## 4. Getting Started
+### 1 · Requirements
 
-### Prerequisites
-* Linux (Ubuntu 22.04 recommended)
-* Python >= 3.8
-* PyTorch >= 2.0 (CUDA 12.1 recommended)
+- Linux (Ubuntu 22.04 recommended)
+- Python ≥ 3.8, PyTorch ≥ 2.0 (CUDA 12.1 recommended)
 
-### Installation
-Clone the repository and install the required dependencies:
+### 2 · Code and dependencies
+
 ```bash
-git clone https://github.com/dongpeng011/ISGA-ViT.git
-cd ISGA-ViT
+git clone https://github.com/dongpeng011/ConReID-Dataset.git
+cd ConReID-Dataset/ISGAViT-main/ISGAViT-main
 pip install -r requirements.txt
 ```
 
-### Data Preparation
-Download the Con-ReID dataset (and other public datasets if needed) and organize them in the ./data/ directory as follows:
+### 3 · Data preparation
+
+Download the Con-ReID crops from this repository and arrange them next to the
+public benchmarks:
+
 ```
-ISGA-ViT/
+ISGAViT-main/
 ├── data/
 │   ├── Con-ReID/
 │   │   ├── bounding_box_train/
 │   │   ├── bounding_box_test/
-│   │   └── query/
+│   │   ├── query/
+│   │   └── gallery/
 │   ├── market1501/
 │   └── msmt17/
-├── models/
 ├── configs/
 └── train.py
-(Note: Please ensure you modify the dataset root paths in your configuration files accordingly.)
 ```
 
-### Training & Evaluation
-To train the ISGA-ViT model:
-Example training command for Con-ReID
-```
+Update the dataset root in the configuration file you use.
+
+### 4 · Training and evaluation
+
+```bash
+# train on Con-ReID
 python train.py --config_file configs/con_reid.yml MODEL.DEVICE_ID "('0')"
+
+# evaluate a checkpoint
+python test.py --config_file configs/con_reid.yml MODEL.DEVICE_ID "('0')" \
+    TEST.WEIGHT /path/to/best_model.pth
 ```
 
-To evaluate a pre-trained model:
-Example testing command
-```
-python test.py --config_file configs/con_reid.yml MODEL.DEVICE_ID "('0')" \TEST.WEIGHT /path/to/your/best_model.pth
-```
+## 🙏 Acknowledgement
 
-## 5. Acknowledgement
-This repository is built upon the excellent open-source work of TransReID and VersReID. We sincerely thank the original authors for their outstanding contributions to the ReID community.
+The code base is built on [TransReID](https://github.com/damo-cv/TransReID) and
+[VersReID](https://github.com/iSEE-Laboratory/VersReID). We thank the authors for
+releasing their work.
 
-## 6. Citation
-If you find our paper, code, or the Con-ReID dataset helpful in your research, please consider citing our work:
-```
-@article{liu2026robust,
-  title={Robust Person Re-identification in Complex Construction Environments via Implicit Scene-Adaptive Prompting and Geometric Manifold Alignment},
-  author={Liu, Hongbin and Dong, Peng and Guo, Xiuyi and Zhao, Yongze and Li, Chengdong and Wang, Yilin},
-  journal={Preprint submitted to Elsevier},
-  year={2026}
+## 📚 Citation
+
+If you use the Con-ReID dataset or the ISGA-ViT code, please cite:
+
+```bibtex
+@article{liu2026unified,
+  title   = {Unified framework for robust Person Re-Identification in complex
+             construction environments},
+  author  = {Liu, Hongbin and Dong, Peng and Guo, Xiuyi and Li, Jilong and
+             Zhou, Yitong and Wang, Baoxu},
+  journal = {Automation in Construction},
+  volume  = {192},
+  pages   = {107253},
+  year    = {2026},
+  doi     = {10.1016/j.autcon.2026.107253}
 }
 ```
 
-## 7. Contact
-If you have any questions, please feel free to open an issue or contact liuhongbin19@sdjzu.edu.cn.
+**Plain text** — Liu, H.; Dong, P.; Guo, X.; Li, J.; Zhou, Y.; Wang, B.
+*Unified framework for robust Person Re-Identification in complex construction
+environments.* Automation in Construction **2026**, 192, 107253.
+https://doi.org/10.1016/j.autcon.2026.107253
+
+## 📧 Contact
+
+Questions, bug reports and requests for the full-resolution dataset:
+**liuhongbin19@sdjzu.edu.cn** or open an issue.
+
+## 📄 License
+
+The code is released under the MIT License (see
+`ISGAViT-main/ISGAViT-main/LICENSE`). Please contact us before redistributing the
+dataset images.
